@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Tiddler&#39;s Blog</title>
+  
+  <subtitle> </subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="qianbeidexiaoyu.cool/"/>
+  <updated>2020-06-04T11:04:23.000Z</updated>
+  <id>qianbeidexiaoyu.cool/</id>
+  
+  <author>
+    <name>Tiddler</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>从尾到头打印链表</title>
+    <link href="qianbeidexiaoyu.cool/2020/06/04/cong-wei-dao-tou-da-yin-lian-biao/"/>
+    <id>qianbeidexiaoyu.cool/2020/06/04/cong-wei-dao-tou-da-yin-lian-biao/</id>
+    <published>2020-06-04T10:34:43.000Z</published>
+    <updated>2020-06-04T11:04:23.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="题目链接"><a href="#题目链接" class="headerlink" title="题目链接"></a>题目链接</h1><p><a href="https://leetcode-cn.com/problems/cong-wei-dao-tou-da-yin-lian-biao-lcof/" target="_blank" rel="noopener">LeetCode</a></p><h1 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h1><p>输入一个链表的头节点，从尾到头反过来返回每个节点的值（用数组返回）</p><h4 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h4><pre><code>输入：head = [1,3,2]输出：[2,3,1]`</code></pre><h4 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h4><p><code>0 &lt;= 链表长度 &lt;= 10000</code></p><h1 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h1><ol><li>递归</li><li>用栈来存储遍历序列</li><li>再构造一个链表并输出</li></ol><h1 id="错误总结"><a href="#错误总结" class="headerlink" title="错误总结"></a>错误总结</h1><ol><li>数组传递引用必须指定数组大小，函数形参形式 <code>eg: (&amp;arr)[3]</code>，不推荐使用数组的引用作为函数参数,因为要给定数组大小，因此在传递数组时一般使用指针，但使用指针无法通过<code>(sizeof(arr) / sizeof(arr[0])</code>获取数组的元素个数，因此一般在函数形参列表中再给定义一个参数<code>eg:  LinkList array2linklist(ElemType* arr,int n)</code><h1 id="代码部分"><a href="#代码部分" class="headerlink" title="代码部分"></a>代码部分</h1><h4 id="使用递归算法：单链表结构包含头结点"><a href="#使用递归算法：单链表结构包含头结点" class="headerlink" title="使用递归算法：单链表结构包含头结点"></a>使用递归算法：单链表结构包含头结点</h4><pre><code>#include&lt;iostream&gt;#include&lt;vector&gt;using namespace std;//单链表基本结构#define ElemType inttypedef struct LNode { ElemType data; struct LNode* next;}LNode, *LinkList;//传入一个链表指针，生成一个带有空的头结点的单链表bool InitList(LinkList&amp; L) { LNode* head = new(LNode); if (!head)     return false; L = head; head-&gt;next = nullptr; head-&gt;data = NULL; return true;}//求表长int Length(LinkList L) { int num_node = 0; LNode* p = L; while (p-&gt;next) {     p = p-&gt;next;     num_node++; } return num_node;}//在单链表L上的第i个位置插入data=e的节点 头结点为第0个节点bool ListInsert(LinkList&amp; L, int i, ElemType e) { //新建节点 LNode* new_node = new(LNode); if (!new_node)     return false; new_node-&gt;next = nullptr; new_node-&gt;data = e; //插入的位置区间为[1,Length+1] if (i&lt;1 || i &gt; Length(L) + 1)     return false; //找到第i-1个节点 LNode* p = L; //p走到第i-1个位置，并将新节点插入到第i个位置 for (int j = 0; j &lt; i - 1; j++)     p = p-&gt;next; //将新节点插入到p之后 new_node-&gt;next = p-&gt;next; p-&gt;next = new_node; return true;}//输出操作。按前后顺序输出线性表L的所有元素值void PrintList(LinkList L) { LNode* p = L; if (!p-&gt;next) {     cout &lt;&lt; "链表为空" &lt;&lt; endl;     return; } while (p-&gt;next) {     p = p-&gt;next;     cout &lt;&lt; p-&gt;data &lt;&lt; " "; } cout &lt;&lt; endl;}//输入一个数组，将其存储成单链表的形式//@n:数组元素的个数LinkList array2linklist(ElemType* arr,int n) { LinkList L; InitList(L); for (int i = 1; i &lt; n + 1; i++) {     ListInsert(L, i, arr[i - 1]); } return L;}//反转输出单链表，返回一个vector&lt;int&gt;vector&lt;int&gt; reversePrint(LNode* head){ vector&lt;int&gt; out; if (head){     out = reversePrint(head-&gt;next);     out.push_back(head-&gt;data); } return out;}//主函数测试int main() { ElemType arr[3] = { 1,3,2 }; int n = sizeof(arr) / sizeof(arr[0]); vector&lt;int&gt; out; LinkList head = array2linklist(arr,n); PrintList(head);     out = reversePrint(head-&gt;next); //带有一个头结点，LeetCode没有，所以传值直接传head-&gt;next //输出打印 for (int i = 0; i &lt; out.size(); i++) {     cout &lt;&lt; out[i] &lt;&lt; " "; } cout &lt;&lt; endl; system("pause"); return 0;}</code></pre><h1 id="LeetCode代码"><a href="#LeetCode代码" class="headerlink" title="LeetCode代码"></a>LeetCode代码</h1><pre><code>class Solution {public: vector&lt;int&gt; reversePrint(ListNode* head) {     vector&lt;int&gt; out;     if (head){         out = reversePrint(head-&gt;next);         out.push_back(head-&gt;val);     } return out; }};</code></pre></li></ol><script>        document.querySelectorAll('.github-emoji')          .forEach(el => {            if (!el.dataset.src) { return; }            const img = document.createElement('img');            img.style = 'display:none !important;';            img.src = el.dataset.src;            img.addEventListener('error', () => {              img.remove();              el.style.color = 'inherit';              el.style.backgroundImage = 'none';              el.style.background = 'none';            });            img.addEventListener('load', () => {              img.remove();            });            document.body.appendChild(img);          });      </script>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;题目链接&quot;&gt;&lt;a href=&quot;#题目链接&quot; class=&quot;headerlink&quot; title=&quot;题目链接&quot;&gt;&lt;/a&gt;题目链接&lt;/h1&gt;&lt;p&gt;&lt;a href=&quot;https://leetcode-cn.com/problems/cong-wei-dao-tou-da-
+      
+    
+    </summary>
+    
+    
+      <category term="算法" scheme="qianbeidexiaoyu.cool/categories/%E7%AE%97%E6%B3%95/"/>
+    
+    
+      <category term="剑指offer" scheme="qianbeidexiaoyu.cool/tags/%E5%89%91%E6%8C%87offer/"/>
+    
+      <category term="单链表" scheme="qianbeidexiaoyu.cool/tags/%E5%8D%95%E9%93%BE%E8%A1%A8/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>线性表</title>
+    <link href="qianbeidexiaoyu.cool/2020/06/04/xian-xing-biao/"/>
+    <id>qianbeidexiaoyu.cool/2020/06/04/xian-xing-biao/</id>
+    <published>2020-06-04T01:47:17.000Z</published>
+    <updated>2020-06-04T07:56:27.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="线性表的基本操作"><a href="#线性表的基本操作" class="headerlink" title="线性表的基本操作"></a>线性表的基本操作</h1><p><code>InitList(&amp;L)</code>：初始化表，构造一个空的线性表。<br><code>Length(L)</code>:求表长。返回线性表L的长度，即L中数据元素的个数。<br><code>LocateElem(L,e)</code>:按值查找操作。在表L中查找具有给定关键字值的元素。<br><code>GetElem(L,i)</code>：按位查找操作。获取表L中第i个位置的元素的值。<br><code>ListInsert(&amp;L,i,e)</code>:插入操作。在表L中第i个位置上插入指定元素e。<br><code>ListDelete(&amp;L,i,&amp;e)</code>:删除操作。删除表L中第i个位置的元素，并用e返回删除元素的值。<br><code>PrintList(L)</code>:输出操作。按前后顺序输出线性表L的所有元素值。<br><code>Empty(L)</code>:判空操作，若L为空表，则返回true，否则返回false，<br><code>Destroylist(&amp;L)</code>:销毁操作。销毁线性表，并释放线性表L所占用的内存空间。</p><h2 id="线性表的顺序存储-顺序表-相关操作基于动态分配"><a href="#线性表的顺序存储-顺序表-相关操作基于动态分配" class="headerlink" title="线性表的顺序存储-顺序表:相关操作基于动态分配"></a>线性表的顺序存储-顺序表:相关操作基于动态分配</h2><h3 id="宏定义"><a href="#宏定义" class="headerlink" title="宏定义"></a>宏定义</h3><pre><code># define ElemType int# define MaxSize 100            //线性表最大长度# define SeqList_INITSIZE 100    //表长度初始定义# define SeqList_INCREMENT 10    //当顺序表满，动态扩充顺序表的增量</code></pre><h3 id="结构体定义"><a href="#结构体定义" class="headerlink" title="结构体定义"></a>结构体定义</h3><pre><code>//结构体定义-静态分配typedef struct {    ElemType data[MaxSize];    int length;}SeqList;//结构体定义-动态分配typedef struct{    ElemType* data;    int length;    int MaxSize;}SeqList;</code></pre><h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><pre><code>//初始化表，构造一个空的线性表。bool InitList(SeqList&amp; L){    L.data = new ElemType[SeqList_INITSIZE];    if (L.data == NULL)        return false;    L.length = 0;    L.MaxSize = SeqList_INITSIZE;    return true;}</code></pre><h3 id="求表长"><a href="#求表长" class="headerlink" title="求表长"></a>求表长</h3><pre><code>int Length(SeqList L) {    return L.length;}</code></pre><h3 id="按值查找"><a href="#按值查找" class="headerlink" title="按值查找"></a>按值查找</h3><pre><code>int LocateElem(SeqList L, ElemType e) {    for (int i = 0; i &lt; L.length; i++) {        if (L.data[i] == e)            return i;    }    return -1;}</code></pre><h3 id="按索引查找"><a href="#按索引查找" class="headerlink" title="按索引查找"></a>按索引查找</h3><pre><code>ElemType GetElem(SeqList L,int i) {    return L.data[i];}</code></pre><h3 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h3><pre><code>bool ListInsert(SeqList&amp; L,int i,ElemType e){    ElemType *data_new, *p, *q;    if (i&lt;1 || i&gt;L.length + 1)         return false;    if (L.length &gt;= L.MaxSize){        data_new = new ElemType[L.MaxSize+ SeqList_INCREMENT];        if (!data_new)            return false;        L.data = data_new;        L.MaxSize += SeqList_INCREMENT;    }    q = &amp;(L.data[i - 1]);    for (p = &amp;(L.data[L.length - 1]); p &gt;= q; p--)        *(p + 1) = *p;    *q = e;    L.length++;    return true;}</code></pre><h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><pre><code>bool ListDelete(SeqList&amp; L,int i,ElemType&amp; e){    ElemType *p, *q;    if (i&lt;1 || i&gt;L.length)        return false;    p = &amp;(L.data[i - 1]);    e = *p;    q = L.data + L.length - 1;    for (++p; p &lt;= q; ++p)        *(p - 1) = *p;    L.length--;    return true;}</code></pre><h3 id="打印"><a href="#打印" class="headerlink" title="打印"></a>打印</h3><pre><code>bool PrintList(SeqList L){    int i;    if (L.length&lt;1)        return false;    else{        for (i = 0; i&lt;L.length; i++)            cout &lt;&lt; L.data[i] &lt;&lt; "   ";    }    return true;}</code></pre><h3 id="判空"><a href="#判空" class="headerlink" title="判空"></a>判空</h3><pre><code>bool Empty(SeqList L) {    if (L.Length == 0)        return true;    return false;}</code></pre><h3 id="销毁"><a href="#销毁" class="headerlink" title="销毁"></a>销毁</h3><pre><code>void Destroylist(SeqList&amp; L) {    if (L.data)        free(L.data);}</code></pre><h2 id="线性表的链式存储-单链表"><a href="#线性表的链式存储-单链表" class="headerlink" title="线性表的链式存储-单链表"></a>线性表的链式存储-单链表</h2><h3 id="宏定义-1"><a href="#宏定义-1" class="headerlink" title="宏定义"></a>宏定义</h3><pre><code># define ElemType int</code></pre><h3 id="结构体定义-1"><a href="#结构体定义-1" class="headerlink" title="结构体定义"></a>结构体定义</h3><pre><code>typedef struct LNode{    ElemType data;    struct LNonde* next;}LNode,*LinkList;</code></pre><h3 id="初始化链表"><a href="#初始化链表" class="headerlink" title="初始化链表"></a>初始化链表</h3><pre><code>//传入一个链表指针，生成一个带有空的头结点的单链表bool InitList(LinkList&amp; L){    LNode* head = new(LNode);    if (!head)        return false;    L = head;    head-&gt;next = nullptr;    head-&gt;data = NULL;    return true;}</code></pre><h3 id="求表长-1"><a href="#求表长-1" class="headerlink" title="求表长"></a>求表长</h3><pre><code>int Length(LinkList L) {    int num_node = 0;    LNode* p = L;    while (p-&gt;next) {        p = p-&gt;next;        num_node++;    }    return num_node;}</code></pre><h3 id="按值查找-1"><a href="#按值查找-1" class="headerlink" title="按值查找"></a>按值查找</h3><pre><code>int LocateElem(LinkList L, ElemType e) {    LNode* p = L;    int index = 0;    while (p-&gt;next) {        p = p-&gt;next;        index++;        if (p-&gt;data == e)            return index;    }    return -1;}</code></pre><h3 id="按索引查找-1"><a href="#按索引查找-1" class="headerlink" title="按索引查找"></a>按索引查找</h3><pre><code>ElemType GetElem(LinkList L, int i) {    if (i&lt;1 || i &gt; Length(L))        return NULL;    LNode* p = L;    for (int j = 0; j &lt; i; j++)        p = p-&gt;next;    return p-&gt;data;}</code></pre><h3 id="插入-1"><a href="#插入-1" class="headerlink" title="插入"></a>插入</h3><pre><code>//在单链表L上的第i个位置插入data=e的节点 头结点为第0个节点bool ListInsert(LinkList&amp; L,int i, ElemType e){    //新建节点    LNode* new_node = new(LNode);    if (!new_node)        return false;    new_node-&gt;next = nullptr;    new_node-&gt;data = e;    //插入的位置区间为[1,Length+1]    if (i&lt;1 || i &gt; Length(L) +1)        return false;     //找到第i-1个节点    LNode* p = L;    //p走到第i-1个位置，并将新节点插入到第i个位置    for (int j = 0; j &lt; i-1; j++)        p = p-&gt;next;    //将新节点插入到p之后    new_node-&gt;next = p-&gt;next;    p-&gt;next = new_node;    return true;}</code></pre><h3 id="删除-1"><a href="#删除-1" class="headerlink" title="删除"></a>删除</h3><pre><code>//删除操作。删除表L中第i个位置的元素，并用e返回删除元素的值。bool ListDelete(LinkList&amp; L,int i, ElemType&amp; e) {    if (i&lt;1 || i &gt; Length(L))        return false;    //找到第i个节点    LNode* p = L;    LNode* pre = p;    for (int j = 0; j &lt; i; j++) {        pre = p;        p = p-&gt;next;    }    //保存被删除的值    e = p-&gt;data;    pre-&gt;next = p-&gt;next;    delete(p);    p = nullptr;    return true;}</code></pre><h3 id="打印-1"><a href="#打印-1" class="headerlink" title="打印"></a>打印</h3><pre><code>//按前后顺序输出线性表L的所有元素值void PrintList(LinkList L) {    LNode* p = L;    if (!p-&gt;next){        cout &lt;&lt; "链表为空" &lt;&lt; endl;        return;    }    while(p-&gt;next) {        p = p-&gt;next;        cout &lt;&lt; p-&gt;data &lt;&lt; " ";    }    cout &lt;&lt; endl;}</code></pre><h3 id="判空-1"><a href="#判空-1" class="headerlink" title="判空"></a>判空</h3><pre><code>//若L为空表，则返回true，否则返回falsebool Empty(LinkList L) {    LNode* p = L;    if (p-&gt;next)        return true;    else        return false;}</code></pre><h3 id="销毁-1"><a href="#销毁-1" class="headerlink" title="销毁"></a>销毁</h3><pre><code>//销毁操作。销毁线性表，并释放线性表L所占用的内存空间,包括头结点bool Destroylist(LinkList &amp;L) {    LNode* p = L;    LNode* delete_ptr = p;    while (p-&gt;next) {        delete_ptr = p;        p = p-&gt;next;        delete(delete_ptr);    }    delete(p);    L = nullptr;    return true;}</code></pre><h3 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h3><pre><code>#include&lt;iostream&gt;#include&lt;string.h&gt;#define ElemType intusing namespace std;/*线性表的基本操作*//*InitList(&amp;L)：初始化表，构造一个空的线性表。Length(L):求表长。返回线性表L的长度，即L中数据元素的个数。LocateElem(L,e):按值查找操作。在表L中查找具有给定关键字值的元素。GetElem(L,i)：按位查找操作。获取表L中第i个位置的元素的值。ListInsert(&amp;L,i,e):插入操作。在表L中第i个位置上插入指定元素e。ListDelete(&amp;L,i,&amp;e):删除操作。删除表L中第i个位置的元素，并用e返回删除元素的值。PrintList(L):输出操作。按前后顺序输出线性表L的所有元素值。Empty(L):判空操作，若L为空表，则返回true，否则返回false，Destroylist(&amp;L):销毁操作。销毁线性表，并释放线性表L所占用的内存空间。*/typedef struct LNode {    ElemType data;    struct LNode* next;}LNode, *LinkList;//传入一个链表指针，生成一个带有空的头结点的单链表bool InitList(LinkList&amp; L){    LNode* head = new(LNode);    if (!head)        return false;    L = head;    head-&gt;next = nullptr;    head-&gt;data = NULL;    return true;}//求表长int Length(LinkList L) {    int num_node = 0;    LNode* p = L;    while (p-&gt;next) {        p = p-&gt;next;        num_node++;    }    return num_node;}//按值查找操作。在表L中查找具有给定关键字值的元素int LocateElem(LinkList L, ElemType e) {    LNode* p = L;    int index = 0;    while (p-&gt;next) {        p = p-&gt;next;        index++;        if (p-&gt;data == e)            return index;    }    return -1;}//按位查找操作。获取表L中第i个位置的元素的值。ElemType GetElem(LinkList L, int i) {    if (i&lt;1 || i &gt; Length(L))        return NULL;    LNode* p = L;    for (int j = 0; j &lt; i; j++)        p = p-&gt;next;    return p-&gt;data;}//在单链表L上的第i个位置插入data=e的节点 头结点为第0个节点bool ListInsert(LinkList&amp; L,int i, ElemType e){    //新建节点    LNode* new_node = new(LNode);    if (!new_node)        return false;    new_node-&gt;next = nullptr;    new_node-&gt;data = e;    //插入的位置区间为[1,Length+1]    if (i&lt;1 || i &gt; Length(L) +1)        return false;     //找到第i-1个节点    LNode* p = L;    //p走到第i-1个位置，并将新节点插入到第i个位置    for (int j = 0; j &lt; i-1; j++)        p = p-&gt;next;    //将新节点插入到p之后    new_node-&gt;next = p-&gt;next;    p-&gt;next = new_node;    return true;}//删除操作。删除表L中第i个位置的元素，并用e返回删除元素的值。bool ListDelete(LinkList&amp; L,int i, ElemType&amp; e) {    if (i&lt;1 || i &gt; Length(L))        return false;    //找到第i个节点    LNode* p = L;    LNode* pre = p;    for (int j = 0; j &lt; i; j++) {        pre = p;        p = p-&gt;next;    }    //保存被删除的值    e = p-&gt;data;    pre-&gt;next = p-&gt;next;    delete(p);    p = nullptr;    return true;}//输出操作。按前后顺序输出线性表L的所有元素值void PrintList(LinkList L) {    LNode* p = L;    if (!p-&gt;next){        cout &lt;&lt; "链表为空" &lt;&lt; endl;        return;    }    while(p-&gt;next) {        p = p-&gt;next;        cout &lt;&lt; p-&gt;data &lt;&lt; " ";    }    cout &lt;&lt; endl;}//判空操作，若L为空表，则返回true，否则返回falsebool Empty(LinkList L) {    LNode* p = L;    if (p-&gt;next)        return true;    else        return false;}//销毁操作。销毁线性表，并释放线性表L所占用的内存空间,包括头结点bool Destroylist(LinkList &amp;L) {    LNode* p = L;    LNode* delete_ptr = p;    while (p-&gt;next) {        delete_ptr = p;        p = p-&gt;next;        delete(delete_ptr);    }    delete(p);    L = nullptr;    return true;}int main() {    ElemType e;    LinkList L;    InitList(L);    PrintList(L);    ListInsert(L, 1, 1);    PrintList(L);    ListInsert(L, 2, 1);    PrintList(L);    ListInsert(L, 1, 3);    PrintList(L);    ListInsert(L, 3, 4);    PrintList(L);    cout &lt;&lt; GetElem(L, 2) &lt;&lt; endl;;    cout &lt;&lt; LocateElem(L, 4) &lt;&lt; endl;    ListDelete(L, 3, e);    PrintList(L);    cout &lt;&lt; bool(Empty(L)) &lt;&lt; endl;    Destroylist(L);    system("pause");    return 0;}</code></pre><script>        document.querySelectorAll('.github-emoji')          .forEach(el => {            if (!el.dataset.src) { return; }            const img = document.createElement('img');            img.style = 'display:none !important;';            img.src = el.dataset.src;            img.addEventListener('error', () => {              img.remove();              el.style.color = 'inherit';              el.style.backgroundImage = 'none';              el.style.background = 'none';            });            img.addEventListener('load', () => {              img.remove();            });            document.body.appendChild(img);          });      </script>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;线性表的基本操作&quot;&gt;&lt;a href=&quot;#线性表的基本操作&quot; class=&quot;headerlink&quot; title=&quot;线性表的基本操作&quot;&gt;&lt;/a&gt;线性表的基本操作&lt;/h1&gt;&lt;p&gt;&lt;code&gt;InitList(&amp;amp;L)&lt;/code&gt;：初始化表，构造一个空的线性表。&lt;
+      
+    
+    </summary>
+    
+    
+      <category term="数据结构" scheme="qianbeidexiaoyu.cool/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"/>
+    
+    
+      <category term="单链表" scheme="qianbeidexiaoyu.cool/tags/%E5%8D%95%E9%93%BE%E8%A1%A8/"/>
+    
+      <category term="线性表" scheme="qianbeidexiaoyu.cool/tags/%E7%BA%BF%E6%80%A7%E8%A1%A8/"/>
+    
+      <category term="顺序表" scheme="qianbeidexiaoyu.cool/tags/%E9%A1%BA%E5%BA%8F%E8%A1%A8/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>替换字符串</title>
+    <link href="qianbeidexiaoyu.cool/2020/06/03/ti-huan-zi-fu-chuan/"/>
+    <id>qianbeidexiaoyu.cool/2020/06/03/ti-huan-zi-fu-chuan/</id>
+    <published>2020-06-03T07:36:50.000Z</published>
+    <updated>2020-06-03T07:48:44.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="题目链接"><a href="#题目链接" class="headerlink" title="题目链接"></a>题目链接</h1><p><a href="https://leetcode-cn.com/problems/ti-huan-kong-ge-lcof/" target="_blank" rel="noopener">LeetCode</a></p><h1 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h1><p>请实现一个函数，把字符串 s 中的每个空格替换成”%20”。</p><h4 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h4><pre><code>输入：s = "We are happy."输出："We%20are%20happy."</code></pre><h4 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h4><p><code>0 &lt;= s 的长度 &lt;= 10000</code></p><h1 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h1><ul><li>从后往前遍历字符串，遇到’ ‘，就扩充两个任意字符，用’%’替换’ ‘,在’%’后插入20</li><li>直接使用C++的库函数str.replace()</li></ul><h1 id="代码部分"><a href="#代码部分" class="headerlink" title="代码部分"></a>代码部分</h1><pre><code>#include&lt;iostream&gt;#include&lt;string&gt;using namespace std;int main() {    string s = "We are happy.";    for (int i = s.size()-1; i &gt;= 0; i--) {        if (s[i] == ' ') {            s[i] = '%';            s.insert(i+1,"20");        }    }    //s.replace(" ", "%20");    cout &lt;&lt; s &lt;&lt; endl;    system("pause");    return 0;}</code></pre><script>        document.querySelectorAll('.github-emoji')          .forEach(el => {            if (!el.dataset.src) { return; }            const img = document.createElement('img');            img.style = 'display:none !important;';            img.src = el.dataset.src;            img.addEventListener('error', () => {              img.remove();              el.style.color = 'inherit';              el.style.backgroundImage = 'none';              el.style.background = 'none';            });            img.addEventListener('load', () => {              img.remove();            });            document.body.appendChild(img);          });      </script>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;题目链接&quot;&gt;&lt;a href=&quot;#题目链接&quot; class=&quot;headerlink&quot; title=&quot;题目链接&quot;&gt;&lt;/a&gt;题目链接&lt;/h1&gt;&lt;p&gt;&lt;a href=&quot;https://leetcode-cn.com/problems/ti-huan-kong-ge-lcof
+      
+    
+    </summary>
+    
+    
+      <category term="算法" scheme="qianbeidexiaoyu.cool/categories/%E7%AE%97%E6%B3%95/"/>
+    
+    
+      <category term="剑指offer" scheme="qianbeidexiaoyu.cool/tags/%E5%89%91%E6%8C%87offer/"/>
+    
+      <category term="数组" scheme="qianbeidexiaoyu.cool/tags/%E6%95%B0%E7%BB%84/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>二维数组中的查找</title>
+    <link href="qianbeidexiaoyu.cool/2020/06/01/er-wei-shu-zu-zhong-de-cha-zhao/"/>
+    <id>qianbeidexiaoyu.cool/2020/06/01/er-wei-shu-zu-zhong-de-cha-zhao/</id>
+    <published>2020-06-01T09:44:48.000Z</published>
+    <updated>2020-06-03T07:39:06.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="题目链接"><a href="#题目链接" class="headerlink" title="题目链接"></a>题目链接</h1><p><a href="https://leetcode-cn.com/problems/er-wei-shu-zu-zhong-de-cha-zhao-lcof/" target="_blank" rel="noopener">LeetCode</a></p><h1 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h1><p>在一个 n * m 的二维数组中，每一行都按照从左到右递增的顺序排序，每一列都按照从上到下递增的顺序排序。请完成一个函数，输入这样的一个二维数组和一个整数，判断数组中是否含有该整数。</p><h4 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h4><p>现有矩阵 matrix 如下：</p><pre><code>[  [1,   4,  7, 11, 15],  [2,   5,  8, 12, 19],  [3,   6,  9, 16, 22],  [10, 13, 14, 17, 24],  [18, 21, 23, 26, 30]]</code></pre><p>给定<code>target = 5</code>，返回 <code>true</code>。<br>给定 <code>target = 20</code>，返回 <code>false</code>。</p><h4 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h4><p><code>0 &lt;= n &lt;= 1000</code><br><code>0 &lt;= m &lt;= 1000</code></p><h1 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h1><p><img src="https://camo.githubusercontent.com/824740aa7a22becec207e8f97346ca5b3aeecea4/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f33356138633731312d306463302d343631332d393566332d6265393663366336653130342e676966" alt="思路演示"></p><h1 id="经验总结"><a href="#经验总结" class="headerlink" title="经验总结"></a>经验总结</h1><h2 id="二维vector的初始化方法"><a href="#二维vector的初始化方法" class="headerlink" title="二维vector的初始化方法"></a>二维vector的初始化方法</h2><ul><li>利用复制构造函数<br>vector&lt;vector<int>&gt; matrix = { { 1,2 },{ 3,4 } };<br>vector&lt;vector<int>&gt; matrix = vector&lt;vector<int>&gt;(2, vector<int>(2)) = { { 1,2 },{ 3,4 } };</int></int></int></int></li><li>利用vector构造函数<br>vector&lt;vector<int>&gt; matrix{ { 1,2 },{ 3,4 } };   //可以省去小括号<br>vector&lt;vector<int>&gt; matrix({ { 1,2 },{ 3,4 } });</int></int></li></ul><h1 id="代码部分"><a href="#代码部分" class="headerlink" title="代码部分"></a>代码部分</h1><pre><code>#include&lt;iostream&gt;#include&lt;vector&gt;using namespace std;bool findNumberIn2DArray(vector&lt;vector&lt;int&gt;&gt;&amp; matrix, int target);int main() {    vector&lt;vector&lt;int&gt;&gt; matrix{                                                               {1,  4,  7,  11, 15},                                                               {2,  5,  8,  12, 19},                                                               {3,  6,  9,  16, 22},                                                               {10, 13, 14, 17, 24},                                                               {18, 21, 23, 26, 30}                                                            };     int target = 25;    cout&lt;&lt;findNumberIn2DArray(matrix, target)&lt;&lt;endl;    system("pause");    return 0;}bool findNumberIn2DArray(vector&lt;vector&lt;int&gt;&gt;&amp; matrix,int target) {    for (int i = 0; i &lt; matrix.size(); i++) {        for (int j = 0; j &lt; matrix[i].size(); j++) {            if (matrix[i][j] == target) {                return true;            }            if (matrix[i][j] &gt; target) {                continue;            }        }    }    return false;}</code></pre><script>        document.querySelectorAll('.github-emoji')          .forEach(el => {            if (!el.dataset.src) { return; }            const img = document.createElement('img');            img.style = 'display:none !important;';            img.src = el.dataset.src;            img.addEventListener('error', () => {              img.remove();              el.style.color = 'inherit';              el.style.backgroundImage = 'none';              el.style.background = 'none';            });            img.addEventListener('load', () => {              img.remove();            });            document.body.appendChild(img);          });      </script>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;题目链接&quot;&gt;&lt;a href=&quot;#题目链接&quot; class=&quot;headerlink&quot; title=&quot;题目链接&quot;&gt;&lt;/a&gt;题目链接&lt;/h1&gt;&lt;p&gt;&lt;a href=&quot;https://leetcode-cn.com/problems/er-wei-shu-zu-zhong-
+      
+    
+    </summary>
+    
+    
+      <category term="算法" scheme="qianbeidexiaoyu.cool/categories/%E7%AE%97%E6%B3%95/"/>
+    
+    
+      <category term="剑指offer" scheme="qianbeidexiaoyu.cool/tags/%E5%89%91%E6%8C%87offer/"/>
+    
+      <category term="数组" scheme="qianbeidexiaoyu.cool/tags/%E6%95%B0%E7%BB%84/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>数组中的重复数字</title>
+    <link href="qianbeidexiaoyu.cool/2020/06/01/shu-zu-zhong-chong-fu-de-shu-zi/"/>
+    <id>qianbeidexiaoyu.cool/2020/06/01/shu-zu-zhong-chong-fu-de-shu-zi/</id>
+    <published>2020-06-01T06:45:10.000Z</published>
+    <updated>2020-06-03T07:39:17.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="题目链接"><a href="#题目链接" class="headerlink" title="题目链接"></a>题目链接</h1><p><a href="https://leetcode-cn.com/problems/shu-zu-zhong-zhong-fu-de-shu-zi-lcof/" target="_blank" rel="noopener">LeetCode</a></p><h1 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h1><p>在一个长度为 n 的数组里的所有数字都在 0 到 n-1 的范围内。数组中某些数字是重复的，但不知道有几个数字是重复的，也不知道每个数字重复几次。请找出数组中任意一个重复的数字。</p><h4 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h4><pre><code>Input:{2, 3, 1, 0, 2, 5}Output:2</code></pre><h4 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h4><p>2 &lt;= n &lt;= 100000</p><h1 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h1><p><img src="https://camo.githubusercontent.com/c343cf36110223d02ae6c15d5fc9bfd45745b55b/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f36343362366631382d663933332d346163352d616137612d6533303464626437666534392e676966" alt="思路演示"></p><h1 id="代码部分"><a href="#代码部分" class="headerlink" title="代码部分"></a>代码部分</h1><pre><code>#include&lt;iostream&gt;#include&lt;vector&gt;using namespace std;int findRepeatNumber(vector&lt;int&gt;&amp; nums);int main() {    vector&lt;int&gt; nums = { 2,3,1,0,2,5,3 };    cout &lt;&lt; findRepeatNumber(nums)&lt;&lt;endl;    system("pause");    return 0;}int findRepeatNumber(vector&lt;int&gt;&amp; nums) {    //nums.size()    for (int i = 0; i &lt; nums.size(); i++) {        while (nums[i] != nums[nums[i]]) {            swap(nums[i], nums[nums[i]]);        }        //如果当前值与索引不相等，则输出        if(nums[i]!=i){            return nums[i];        }    }    return NULL;}</code></pre><script>        document.querySelectorAll('.github-emoji')          .forEach(el => {            if (!el.dataset.src) { return; }            const img = document.createElement('img');            img.style = 'display:none !important;';            img.src = el.dataset.src;            img.addEventListener('error', () => {              img.remove();              el.style.color = 'inherit';              el.style.backgroundImage = 'none';              el.style.background = 'none';            });            img.addEventListener('load', () => {              img.remove();            });            document.body.appendChild(img);          });      </script>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;题目链接&quot;&gt;&lt;a href=&quot;#题目链接&quot; class=&quot;headerlink&quot; title=&quot;题目链接&quot;&gt;&lt;/a&gt;题目链接&lt;/h1&gt;&lt;p&gt;&lt;a href=&quot;https://leetcode-cn.com/problems/shu-zu-zhong-zhong-f
+      
+    
+    </summary>
+    
+    
+      <category term="算法" scheme="qianbeidexiaoyu.cool/categories/%E7%AE%97%E6%B3%95/"/>
+    
+    
+      <category term="剑指offer" scheme="qianbeidexiaoyu.cool/tags/%E5%89%91%E6%8C%87offer/"/>
+    
+      <category term="数组" scheme="qianbeidexiaoyu.cool/tags/%E6%95%B0%E7%BB%84/"/>
+    
+  </entry>
+  
+</feed>
